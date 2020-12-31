@@ -185,7 +185,7 @@ async function starts() {
 				case 'block':
 					teks = '📝 Bloqueados: \n'
 					for (let block of blocked) {
-						teks += '~> @${block.split('@')[0]}\n'
+						teks += `~> @${block.split('@')[0]}\n`
 					}
 					teks += '👤 Total: ${blocked.length}'
 					client.sendMessage(from, teks.trim(), extendedText, {quoted: mek, contextInfo: {"mentionedJid": blocked}})
