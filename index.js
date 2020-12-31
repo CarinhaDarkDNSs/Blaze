@@ -182,8 +182,8 @@ async function starts() {
 					buffer = await getBuffer(me.imgUrl)
 					client.sendMessage(from, buffer, image, {caption: teks, contextInfo:{mentionedJid: [me.jid]}})
 					break
-				case 'block':
-					teks = '📝 Bloqueados: \n'
+				case 'blocklist':
+					teks = 'This is list of blocked number :\n'
 					for (let block of blocked) {
 						teks += `~> @${block.split('@')[0]}\n`
 					}
