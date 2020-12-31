@@ -1,5 +1,3 @@
-//#TESTE#\\
-
 const {
     WAConnection,
     MessageType,
@@ -109,7 +107,7 @@ async function starts() {
 			const type = Object.keys(mek.message)[0]
 			const apiKey = 'Your-Api-Key'
 			const { text, extendedText, contact, location, liveLocation, image, video, sticker, document, audio, product } = MessageType
-			const time = moment.tz('America/Sao_Paulo').format('DD/MM HH:mm:ss')
+			const time = moment.tz('Asia/Jakarta').format('DD/MM HH:mm:ss')
 			body = (type === 'conversation' && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption.startsWith(prefix) ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption.startsWith(prefix) ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text.startsWith(prefix) ? mek.message.extendedTextMessage.text : ''
 			budy = (type === 'conversation') ? mek.message.conversation : (type === 'extendedTextMessage') ? mek.message.extendedTextMessage.text : ''
 			const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
@@ -172,13 +170,12 @@ async function starts() {
 			switch(command) {
 				case 'comandos':
 				case 'menu':
-					if (!isGroupAdmins) return reply(mess.only.admin)
 					client.sendMessage(from, help(prefix), text)
 					break
 				case 'info':
 					me = client.user
 					uptime = process.uptime()
-					teks = `*💙 BlazeHosting 💙*\n\n🌐*Site:* www.blazehosting.com.br\n💻*Twitter:* twitter.com/blazehostingbr\n📲*Discord:* www.discord.gg/ATkB2ws\n\n⌨*Painel Servidores:* www.central.blazebr.xyz/painel.apk\n\n*🔘 Tempo Ativo* : ${kyun(uptime)}'
+					teks = `*💙 BlazeHosting 💙*\n\n🌐*Site:* www.blazehosting.com.br\n💻*Twitter:* twitter.com/blazehostingbr\n📲*Discord:* www.discord.gg/ATkB2ws\n\n⌨*Painel Servidores:* www.central.blazebr.xyz/painel.apk\n\n*🔘 Tempo Ativo* : ${kyun(uptime)}`
 					buffer = await getBuffer(me.imgUrl)
 					client.sendMessage(from, buffer, image, {caption: teks, contextInfo:{mentionedJid: [me.jid]}})
 					break
@@ -187,7 +184,7 @@ async function starts() {
 					for (let block of blocked) {
 						teks += `~> @${block.split('@')[0]}\n`
 					}
-					teks += '👤 Total: ${blocked.length}'
+					teks += `Total : ${blocked.length}`
 					client.sendMessage(from, teks.trim(), extendedText, {quoted: mek, contextInfo: {"mentionedJid": blocked}})
 					break
 				case 'ocr':
@@ -249,7 +246,7 @@ async function starts() {
 								console.log(`Error : ${err}`)
 								fs.unlinkSync(media)
 								tipe = media.endsWith('.mp4') ? 'video' : 'gif'
-								reply(`❌ Falha, ao converter ${tipe} ke stiker`)
+								reply(`❌ Falha, na época converter ${tipe} ke stiker`)
 							})
 							.on('end', function () {
 								console.log('Finish')
@@ -328,11 +325,13 @@ async function starts() {
 					})
 					break
 				case 'meme':
+					if (!isGroupAdmins) return reply(mess.only.admin)
 					meme = await kagApi.memes()
 					buffer = await getBuffer(`https://imgur.com/${meme.hash}.jpg`)
 					client.sendMessage(from, buffer, image, {quoted: mek, caption: '.......'})
 					break
 				case 'memeindo':
+					if (!isGroupAdmins) return reply(mess.only.admin)
 					memein = await kagApi.memeindo()
 					buffer = await getBuffer(`https://imgur.com/${memein.hash}.jpg`)
 					client.sendMessage(from, buffer, image, {quoted: mek, caption: '.......'})
@@ -344,6 +343,7 @@ async function starts() {
 					reply(`Prefix berhasil di ubah menjadi : ${prefix}`)
 					break
 				case 'loli':
+					if (!isGroupAdmins) return reply(mess.only.admin)
 					loli.getSFWLoli(async (err, res) => {
 						if (err) return reply('❌ *ERRO* ❌')
 						buffer = await getBuffer(res.url)
@@ -351,6 +351,7 @@ async function starts() {
 					})
 					break
 				case 'nsfwloli':
+					if (!isGroupAdmins) return reply(mess.only.admin)
 					if (!isNsfw) return reply('❌ *FALSO* ❌')
 					loli.getNSFWLoli(async (err, res) => {
 						if (err) return reply('❌ *ERRO* ❌')
@@ -451,19 +452,19 @@ async function starts() {
 					teks = (args.length > 1) ? body.slice(8).trim() : ''
 					teks += '\n\n'
 					for (let mem of groupMembers) {
-						teks += ` @${mem.jid.split('@')[0]} `
+						teks += `@${mem.jid.split('@')[0]} `
 						members_id.push(mem.jid)
 					}
 					mentions(teks, members_id, true)
 					break
 				case 'clearall':
-					if (!isOwner) return reply('❌ Você não é o dono! ❌')
+					if (!isOwner) return reply('Kamu siapa?')
 					anu = await client.chats.all()
 					client.setMaxListeners(25)
 					for (let _ of anu) {
 						client.deleteChat(_.jid)
 					}
-					reply('✔ Todas chats foram deletado ✔')
+					reply('Sukses delete all chat :)')
 					break
 				case 'bc':
 					if (!isOwner) return reply('Kamu siapa?')
@@ -487,37 +488,38 @@ async function starts() {
 					if (!isGroup) return reply(mess.only.group)
 					if (!isGroupAdmins) return reply(mess.only.admin)
 					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
-					if (args.length < 1) return reply('👤 Coloque o número da pessoa')
-					if (args[0].startsWith('0')) return reply('✖ Coloque o DDD (Ex: 5519998612484)')
+					if (args.length < 1) return reply('Yang mau di add jin ya?')
+					if (args[0].startsWith('08')) return reply('Gunakan kode negara mas')
 					try {
 						num = `${args[0].replace(/ /g, '')}@s.whatsapp.net`
 						client.groupAdd(from, [num])
 					} catch (e) {
 						console.log('Error :', e)
-						reply('✖ Este número está privado!')
+						reply('Gagal menambahkan target, mungkin karena di private')
 					}
 					break
 				case 'banir':
 					if (!isGroup) return reply(mess.only.group)
 					if (!isGroupAdmins) return reply(mess.only.admin)
 					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
-					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return reply('❌ Marque um membro!❌')
+					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return reply('Tag target yang ingin di tendang!')
 					mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
 					if (mentioned.length > 1) {
-						teks = '✔ Membro Banido:\n'
+						teks = 'Perintah di terima, mengeluarkan :\n'
 						for (let _ of mentioned) {
 							teks += `@${_.split('@')[0]}\n`
 						}
 						mentions(teks, mentioned, true)
 						client.groupRemove(from, mentioned)
 					} else {
-						mentions(`🛑 @${mentioned[0].split('@')[0]} foi banido!`, mentioned, true)
+						mentions(`Perintah di terima, mengeluarkan : @${mentioned[0].split('@')[0]}`, mentioned, true)
 						client.groupRemove(from, mentioned)
 					}
 					break
 				case 'admins':
 					if (!isGroup) return reply(mess.only.group)
-					teks = `📝 Lista de admins: *${groupMetadata.subject}*\n👤 Total : ${groupAdmins.length}\n\n`
+					if (!isGroupAdmins) return reply(mess.only.admin)
+					teks = `List admin of group *${groupMetadata.subject}*\nTotal : ${groupAdmins.length}\n\n`
 					no = 0
 					for (let admon of groupAdmins) {
 						no += 1
@@ -525,7 +527,8 @@ async function starts() {
 					}
 					mentions(teks, groupAdmins, true)
 					break
-				case 'toimg':
+				case 'imagem':
+					if (!isGroupAdmins) return reply(mess.only.admin)
 					if (!isQuotedSticker) return reply('❌ adesivo de resposta um ❌')
 					reply(mess.wait)
 					encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
@@ -539,8 +542,8 @@ async function starts() {
 						fs.unlinkSync(ran)
 					})
 					break
-				case 'discord':
-					if (args.length < 1) return reply('https://discord.gg/ATkB2ws')
+				case 'simi':
+					if (args.length < 1) return reply('Textnya mana um?')
 					teks = body.slice(5)
 					anu = await simih(teks) //fetchJson(`https://mhankbarbars.herokuapp.com/api/samisami?text=${teks}`, {method: 'get'})
 					//if (anu.error) return reply('Simi ga tau kak')
@@ -579,10 +582,10 @@ async function starts() {
 					} else {
 						reply('1 untuk mengaktifkan, 0 untuk menonaktifkan')
 					}
-				case 'foto':
+				case 'clone':
 					if (!isGroup) return reply(mess.only.group)
 					if (!isGroupAdmins) return reply(mess.only.admin)
-					if (args.length < 1) return reply('✖ Marque alguém para copiar a foto!')
+					if (args.length < 1) return reply('Tag target yang ingin di clone')
 					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return reply('Tag cvk')
 					mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid[0]
 					let { jid, id, notify } = groupMembers.find(x => x.jid === mentioned)
@@ -590,9 +593,9 @@ async function starts() {
 						pp = await client.getProfilePicture(id)
 						buffer = await getBuffer(pp)
 						client.updateProfilePicture(botNumber, buffer)
-						mentions(`🏞 Copiando a foto de perfil de @${id.split('@')[0]}`, [jid], true)
+						mentions(`Foto profile Berhasil di perbarui menggunakan foto profile @${id.split('@')[0]}`, [jid], true)
 					} catch (e) {
-						reply('✖ Erro ao copiar a foto!')
+						reply('Gagal om')
 					}
 					break
 				case 'wait':
