@@ -181,11 +181,11 @@ async function starts() {
 					client.sendMessage(from, buffer, image, {caption: teks, contextInfo:{mentionedJid: [me.jid]}})
 					break
 				case 'block':
-					teks = '📝 Bloqueados:'
+					teks = '📝 Bloqueados: \n'
 					for (let block of blocked) {
-						teks += `~> @${block.split('@')[0]}\n `
+						teks += '~> @${block.split('@')[0]}\n'
 					}
-					teks += `Total : ${blocked.length}`
+					teks += '👤 Total: ${blocked.length}'
 					client.sendMessage(from, teks.trim(), extendedText, {quoted: mek, contextInfo: {"mentionedJid": blocked}})
 					break
 				case 'ocr':
