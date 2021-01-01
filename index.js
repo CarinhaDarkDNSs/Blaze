@@ -35,7 +35,7 @@ function kyun(seconds){
   var seconds = Math.floor(seconds % 60);
 
   //return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds)
-  return `${pad(hours)} Jam ${pad(minutes)} Menit ${pad(seconds)} Detik`
+  return `${pad(hours)} hora ${pad(minutes)} minuto ${pad(seconds)} segundos`
 }
 
 async function starts() {
@@ -43,7 +43,7 @@ async function starts() {
 	client.logger.level = 'warn'
 	console.log(banner.string)
 	client.on('qr', () => {
-		console.log(color('[','white'), color('!','red'), color(']','white'), color(' Scan the qr code above'))
+		console.log(color('[','white'), color('!','red'), color(']','white'), color(' Leia o código QR'))
 	})
 	client.on('credentials-updated', () => {
 		fs.writeFileSync('./BarBar.json', JSON.stringify(client.base64EncodedAuthInfo(), null, '\t'))
@@ -51,10 +51,10 @@ async function starts() {
 	})
 	fs.existsSync('./BarBar.json') && client.loadAuthInfo('./BarBar.json')
 	client.on('connecting', () => {
-		start('2', 'Connecting...')
+		start('2', 'Conectando..')
 	})
 	client.on('open', () => {
-		success('2', 'Connected')
+		success('2', 'Conectado!')
 	})
 	await client.connect({timeoutMs: 30*1000})
 
@@ -115,7 +115,6 @@ async function starts() {
 			const isCmd = body.startsWith(prefix)
 
 			mess = {
-				wait: '⌛ Aguarde um pouco... ⌛',
 				success: '✔️ Berhasil ✔️',
 				error: {
 					stick: '❌ Falha, ocorreu um erro ao converter a imagem em um adesivo ❌',
@@ -123,9 +122,8 @@ async function starts() {
 				},
 				only: {
 					group: '❌ Este comando só pode ser usado em grupos! ❌',
-					ownerG: '❌ Este comando só pode ser usado pelo grupo proprietário! ❌',
-					ownerB: '❌ Este comando só pode ser usado pelo bot proprietário! ❌',
-					admin: '',
+					ownerG: '❌ Este comando só pode ser usado pelo dono do grupp! ❌',
+					ownerB: '❌ Este comando só pode ser usado pelo dono do bot! ❌',
 					Badmin: '❌ Bot não é administrador! ❌'
 				}
 			}
@@ -175,7 +173,7 @@ async function starts() {
 				case 'info':
 					me = client.user
 					uptime = process.uptime()
-					teks = `*💙 BlazeHosting 💙*\n\n🌐*Site:* www.blazehosting.com.br\n*💻Twitter:* twitter.com/blazehostingbr\n*📲Discord:* www.discord.gg/ATkB2ws\n\n*⌨Painel Servidores:* www.central.blazebr.xyz/painel.apk\n\n*📅 Data* : ${kyun(uptime)}`
+					teks = `*💙 BlazeHosting 💙*\n\n*🌐 Site:* www.blazehosting.com.br\n*💻 Twitter:* twitter.com/blazehostingbr\n*📲 Discord:* www.discord.gg/ATkB2ws\n\n*⌨ Painel Servidores:* www.central.blazebr.xyz/painel.apk`
 					buffer = await getBuffer(me.imgUrl)
 					client.sendMessage(from, buffer, image, {caption: teks, contextInfo:{mentionedJid: [me.jid]}})
 					break
@@ -268,7 +266,7 @@ async function starts() {
 							fs.unlinkSync(media)
 							let buffer = Buffer.from(res.base64img, 'base64')
 							fs.writeFileSync(ranp, buffer, (err) => {
-								if (err) return reply('Gagal, Terjadi kesalahan, silahkan coba beberapa saat lagi.')
+								if (err) return reply('❌ Erro ❌')
 							})
 							exec(`ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${ranw}`, (err) => {
 								fs.unlinkSync(ranp)
@@ -305,7 +303,7 @@ async function starts() {
 					break
 				case 'gtts':
 					if (!isGroupAdmins) return reply(mess.only.admin)
-					if (args.length < 1) return client.sendMessage(from, 'Kode bahasanya mana om?', text, {quoted: mek})
+					if (args.length < 1) return client.sendMessage(from, '✖ (Ex: .gtts pt-br Seu texto)', text, {quoted: mek})
 					const gtts = require('./lib/gtts')(args[0])
 					if (args.length < 2) return client.sendMessage(from, 'Textnya mana om', text, {quoted: mek})
 					dtt = body.slice(9)
@@ -317,7 +315,7 @@ async function starts() {
 						exec(`ffmpeg -i ${ranm} -ar 48000 -vn -c:a libopus ${rano}`, (err) => {
 							fs.unlinkSync(ranm)
 							buff = fs.readFileSync(rano)
-							if (err) return reply('Gagal om:(')
+							if (err) return reply('')
 							client.sendMessage(from, buff, audio, {quoted: mek, ptt:true})
 							fs.unlinkSync(rano)
 						})
@@ -466,8 +464,8 @@ async function starts() {
 					reply('Sukses delete all chat :)')
 					break
 				case 'say':
-					if (!isOwner) return reply('Kamu siapa?')
-					if (args.length < 1) return reply('.......')
+					if (!isOwner) return reply('❌ Sem permissão ❌')
+					if (args.length < 1) return reply('✖ Coloque uma mensagem!')
 					anu = await client.chats.all()
 					if (isMedia && !mek.message.videoMessage || isQuotedImage) {
 						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
@@ -487,8 +485,8 @@ async function starts() {
 					if (!isGroup) return reply(mess.only.group)
 					if (!isGroupAdmins) return reply(mess.only.admin)
 					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
-					if (args.length < 1) return reply('')
-					if (args[0].startsWith('08')) return reply('✖ Coloque o DDD (Ex: 5519981686309')
+					if (args.length < 1) return reply('✖ Coloque o DDD (Ex: 5519981686309)')
+					if (args[0].startsWith('08')) return reply('✖ Coloque o DDD (Ex: 5519981686309)')
 					try {
 						num = `${args[0].replace(/ /g, '')}@s.whatsapp.net`
 						client.groupAdd(from, [num])
@@ -518,17 +516,17 @@ async function starts() {
 				case 'admins':
 					if (!isGroup) return reply(mess.only.group)
 					if (!isGroupAdmins) return reply(mess.only.admin)
-					teks = `List admin of group *${groupMetadata.subject}*\nTotal : ${groupAdmins.length}\n\n`
+					teks = `📝 Lista de Admin do grupo *${groupMetadata.subject}\n`
 					no = 0
 					for (let admon of groupAdmins) {
 						no += 1
-						teks += `[${no.toString()}] @${admon.split('@')[0]}\n`
+						teks += `[${no.toString()}] @${admon.split('@')[0]}`
 					}
 					mentions(teks, groupAdmins, true)
 					break
 				case 'imagem':
 					if (!isGroupAdmins) return reply(mess.only.admin)
-					if (!isQuotedSticker) return reply('❌ adesivo de resposta um ❌')
+					if (!isQuotedSticker) return reply('❌ marque uma figurinha❌')
 					reply(mess.wait)
 					encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
 					media = await client.downloadAndSaveMediaMessage(encmedia)
@@ -537,7 +535,7 @@ async function starts() {
 						fs.unlinkSync(media)
 						if (err) return reply('❌ Falha ao converter adesivos em imagens ❌')
 						buffer = fs.readFileSync(ran)
-						client.sendMessage(from, buffer, image, {quoted: mek, caption: '>//<'})
+						client.sendMessage(from, buffer, image, {quoted: mek, caption: ''})
 						fs.unlinkSync(ran)
 					})
 					break
