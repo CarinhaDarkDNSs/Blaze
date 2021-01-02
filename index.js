@@ -23,7 +23,7 @@ const loli = new lolis()
 const welkom = JSON.parse(fs.readFileSync('./src/welkom.json'))
 const nsfw = JSON.parse(fs.readFileSync('./src/nsfw.json'))
 const samih = JSON.parse(fs.readFileSync('./src/simi.json'))
-prefix = '.'
+prefix = '/'
 blocked = []
 
 function kyun(seconds){
@@ -68,7 +68,7 @@ async function starts() {
 				try {
 					ppimg = await client.getProfilePicture(`${anu.participants[0].split('@')[0]}@c.us`)
 				} catch {
-					ppimg = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
+					ppimg = 'http://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
 				}
 				teks = `Halo @${num.split('@')[0]}\nSelamat datang di group *${mdata.subject}*`
 				let buff = await getBuffer(ppimg)
@@ -78,7 +78,7 @@ async function starts() {
 				try {
 					ppimg = await client.getProfilePicture(`${num.split('@')[0]}@c.us`)
 				} catch {
-					ppimg = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
+					ppimg = 'http://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
 				}
 				teks = `Sayonara @${num.split('@')[0]}👋`
 				let buff = await getBuffer(ppimg)
@@ -301,7 +301,7 @@ async function starts() {
 						reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
 					}
 					break
-				case 'gtts':
+				case 'audio':
 					if (!isGroupAdmins) return reply(mess.only.admin)
 					if (args.length < 1) return client.sendMessage(from, '✖ (Ex: .gtts pt-br Seu texto)', text, {quoted: mek})
 					const gtts = require('./lib/gtts')(args[0])
@@ -324,20 +324,20 @@ async function starts() {
 				case 'meme':
 					if (!isGroupAdmins) return reply(mess.only.admin)
 					meme = await kagApi.memes()
-					buffer = await getBuffer(`https://imgur.com/${meme.hash}.jpg`)
+					buffer = await getBuffer(`www.imgur.com/${meme.hash}.jpg`)
 					client.sendMessage(from, buffer, image, {quoted: mek, caption: '.......'})
 					break
 				case 'memeindo':
 					if (!isGroupAdmins) return reply(mess.only.admin)
 					memein = await kagApi.memeindo()
-					buffer = await getBuffer(`https://imgur.com/${memein.hash}.jpg`)
+					buffer = await getBuffer(`www.imgur.com/${memein.hash}.jpg`)
 					client.sendMessage(from, buffer, image, {quoted: mek, caption: '.......'})
 					break
 				case 'setprefix':
 					if (args.length < 1) return
 					if (!isOwner) return reply(mess.only.ownerB)
 					prefix = args[0]
-					reply(`Prefix berhasil di ubah menjadi : ${prefix}`)
+					reply(`✖ Prefixo mudado para: ${prefix}`)
 					break
 				case 'loli':
 					if (!isGroupAdmins) return reply(mess.only.admin)
@@ -471,14 +471,12 @@ async function starts() {
 						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
 						buff = await client.downloadMediaMessage(encmedia)
 						for (let _ of anu) {
-							client.sendMessage(_.jid, buff, image, {caption: `*[ Menssagem Automática ]*\n\n${body.slice(4)}`})
+							client.sendMessage(_.jid, buff, image, {caption: `${body.slice(4)}`})
 						}
-						reply('')
 					} else {
 						for (let _ of anu) {
-							sendMess(_.jid, `*[ Menssagem Automática ]*\n\n${body.slice(4)}`)
+							sendMess(_.jid, `${body.slice(4)}`)
 						}
-						reply('')
 					}
 					break
 				case 'add':
@@ -499,7 +497,7 @@ async function starts() {
 					if (!isGroup) return reply(mess.only.group)
 					if (!isGroupAdmins) return reply(mess.only.admin)
 					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
-					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return reply('Tag target yang ingin di tendang!')
+					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return reply('✖ Marque um membro!')
 					mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
 					if (mentioned.length > 1) {
 						teks = '⚠ Expulsando:\n'
@@ -525,7 +523,6 @@ async function starts() {
 					mentions(teks, groupAdmins, true)
 					break
 				case 'imagem':
-					if (!isGroupAdmins) return reply(mess.only.admin)
 					if (!isQuotedSticker) return reply('❌ marque uma figurinha❌')
 					reply(mess.wait)
 					encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
@@ -580,8 +577,8 @@ async function starts() {
 						reply('1 untuk mengaktifkan, 0 untuk menonaktifkan')
 					}
 				case 'clonar':
+					if (!isOwner) return reply('❌ Sem permissão ❌')
 					if (!isGroup) return reply(mess.only.group)
-					if (!isGroupAdmins) return reply(mess.only.admin)
 					if (args.length < 1) return reply('✖ Marque um membro!')
 					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return reply('Tag cvk')
 					mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid[0]
@@ -590,7 +587,7 @@ async function starts() {
 						pp = await client.getProfilePicture(id)
 						buffer = await getBuffer(pp)
 						client.updateProfilePicture(botNumber, buffer)
-						mentions(`Clonando a foto de @${id.split('@')[0]}`, [jid], true)
+						mentions(`✨ Clonando a foto de @${id.split('@')[0]}`, [jid], true)
 					} catch (e) {
 						reply('Gagal om')
 					}
