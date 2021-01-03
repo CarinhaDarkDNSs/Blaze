@@ -203,8 +203,8 @@ async function starts() {
 						reply('Foto aja mas')
 					}
 					break
-				case 'stiker':
 				case 'sticker':
+					if (!isGroupAdmins) return reply(mess.only.admin)
 					if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
 						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
 						const media = await client.downloadAndSaveMediaMessage(encmedia)
@@ -298,7 +298,7 @@ async function starts() {
 							.toFormat('webp')
 							.save(ran)*/
 					} else {
-						reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
+						reply(`✖ O video precisa no maximo 10 segundos`)
 					}
 					break
 				case 'audio':
@@ -523,6 +523,7 @@ async function starts() {
 					mentions(teks, groupAdmins, true)
 					break
 				case 'imagem':
+					if (!isGroupAdmins) return reply(mess.only.admin)
 					if (!isQuotedSticker) return reply('❌ marque uma figurinha❌')
 					reply(mess.wait)
 					encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
@@ -587,7 +588,7 @@ async function starts() {
 						pp = await client.getProfilePicture(id)
 						buffer = await getBuffer(pp)
 						client.updateProfilePicture(botNumber, buffer)
-						mentions(`✨ Clonando a foto de @${id.split('@')[0]}`, [jid], true)
+						mentions(`🗽 Clonando a foto de @${id.split('@')[0]}`, [jid], true)
 					} catch (e) {
 						reply('Gagal om')
 					}
@@ -613,7 +614,7 @@ async function starts() {
 						console.log(muehe)
 						reply(muehe)
 					} else {
-						console.log(color('[ERROR]','red'), 'Unregistered Command from', color(sender.split('@')[0]))
+						console.log(color('[ERROR]','red'), 'Comando desconhecido:', color(sender.split('@')[0]))
 					}
                            }
 		} catch (e) {
